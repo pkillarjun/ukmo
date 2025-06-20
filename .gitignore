@@ -1,0 +1,5 @@
+# Directories
+download/
+
+# Python cache files
+**/__pycache__/
