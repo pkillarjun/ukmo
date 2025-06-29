@@ -10,21 +10,7 @@ from common.config import *
 from common.utility import *
 
 
-def get_all_files(directory):
-    path = Path(directory)
-    if not path.exists():
-        print_log(f"Directory {directory} does not exist", Fore.RED)
-        sys.exit(1)
-
-    files = []
-    for file_path in path.iterdir():
-        if file_path.is_file():
-            files.append(file_path)
-    return files
-
-
 def check_value(file_path):
-    issues = []
     found_issues = False
 
     df = pd.read_csv(file_path)
@@ -36,27 +22,34 @@ def check_value(file_path):
                     continue
 
                 found_issues = True
-                issues.append((col, idx))
+                break
+        if found_issues:
+            break
 
-    if found_issues:
-        print_log(f"\nFile: {file_path.name}", Fore.RED)
-        for col, idx in issues:
-            print_log(f"  Found {DEFAULT_VALUE} in column '{col}' at row {idx}", Fore.YELLOW)
+    return found_issues
 
 
 def main():
-    files = get_all_files(Path(CSV_DIR))
+    runs = generate_runs()
+    print_log(f"Generated {len(runs)} runs", Fore.GREEN)
 
-    print_log("Checking CSV files", Fore.GREEN)
+    bad_runs = []
 
-    if not files:
-        print_log("No files found to process", Fore.RED)
-        return
+    for run in runs:
+        file_path = f"{CSV_DIR}/{run}.csv"
 
-    print_log(f"Found {len(files)} files to check", Fore.BLUE)
+        if not Path(file_path).exists():
+            continue
 
-    for file_path in files:
-        check_value(file_path)
+        if check_value(file_path):
+            print_log(f"Bad values found in: {run}.csv", Fore.RED)
+            bad_runs.append(run)
+
+    with open(IGNORE_FILE, 'w') as f:
+        for run in bad_runs:
+            f.write(f"{run}\n")
+
+    print_log(f"Found {len(bad_runs)} runs with bad values", Fore.BLUE)
 
 
 if __name__ == "__main__":

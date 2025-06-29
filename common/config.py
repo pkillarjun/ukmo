@@ -18,7 +18,7 @@ CSV_DIR = f"{DOWNLOAD_DIR}/ukmo-csv"
 NCDF_DIR = f"{DOWNLOAD_DIR}/ukmo-ncdf"
 
 METAR_FILE = f"{(DOWNLOAD_DIR)}/eglc.csv"
-IGNORE_FILE = f"{(DOWNLOAD_DIR)}/eglc.ignore"
+IGNORE_FILE = f"{(DOWNLOAD_DIR)}/run.ignore"
 
 REQUIRED_VARIABLES = [
     # Temperature
