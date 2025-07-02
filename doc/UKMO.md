@@ -1,53 +1,39 @@
 # ukmo
 ukmo-2km ml model
 
-## Model Configuration
+## Primary Predictive Variables
 
-### Initialization Times
-The model uses the following UKMO-2km model runs:
-- **03Z** (04:00 UK) - Early morning
-- **06Z** (07:00 UK) - Morning transition 
-- **09Z** (10:00 UK) - Active morning heating
-- **12Z** (13:00 UK) - Near-peak heating
-- **15Z** (16:00 UK) - Peak/post-peak temperatures
-
-### Forecast Hours
-- **Training and forecasting window**: 12 hours from the run
-- This window captures the diurnal temperature cycle for accurate maximum temperature prediction
-
-## Primary Predictive Variables (Ranked by Importance)
-
-### 1. Historical Temperature Data (35-45% importance)
+### 1. Historical Temperature Data
 - `temperature_at_screen_level`
 - `temperature_at_screen_level_max`
 - `temperature_at_screen_level_min`
 
-### 2. Solar Radiation Components (15-25% importance)
+### 2. Solar Radiation Components
 - `radiation_flux_in_shortwave_total_downward_at_surface`
 - `radiation_flux_in_shortwave_direct_downward_at_surface`
 - `radiation_flux_in_shortwave_diffuse_downward_at_surface`
 
-### 3. Atmospheric Humidity (15-20% importance)
+### 3. Atmospheric Humidity
 - `relative_humidity_at_screen_level`
 - `temperature_of_dew_point_at_screen_level`
 
-### 4. Pressure Fields (10-20% importance)
+### 4. Pressure Fields
 - `pressure_at_mean_sea_level`
 - `height_ASL_on_pressure_levels`
 
-### 5. Wind Components (5-12% importance)
+### 5. Wind Components
 - `wind_speed_at_10m`
 - `wind_direction_at_10m`
 - `wind_gust_at_10m`
 
-### 6. Cloud Cover (5-10% importance)
+### 6. Cloud Cover
 - `cloud_amount_of_total_cloud`
 - `cloud_amount_of_low_cloud`
 - `cloud_amount_of_medium_cloud`
 - `cloud_amount_of_high_cloud`
 
 
-## Optimal variable combinations for ML models
+## Optimal variable combinations
 
 ### Core ensemble (minimum required):
 ```
