@@ -165,12 +165,12 @@ def transform_run(run):
     if len(output) != ((FORECAST_HOURS - 2) * 2):
         return {}
 
-    training_data = {'run_hour': run_hour, 'input': input, 'output': output}
-    return training_data
+    transformed_data = {'run_hour': run_hour, 'input': input, 'output': output}
+    return transformed_data
 
 
 def transform(run_data):
-    training_data = []
+    transformed_data = []
 
     num_cores = os.cpu_count()
     print_log(f"Using {num_cores} CPU cores for parallel transform processing")
@@ -180,6 +180,6 @@ def transform(run_data):
 
     for run_result in run_results:
         if run_result:
-            training_data.append(run_result)
+            transformed_data.append(run_result)
 
-    return training_data
+    return transformed_data

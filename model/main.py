@@ -140,27 +140,40 @@ def process_runs(runs, metar_data):
     return runs_data
 
 
-def main():
-    print_log("Starting METAR data processing\n", Fore.GREEN)
-
-    runs = generate_runs()
-    runs_test = generate_test()
+def prepare_data(runs):
     print_log(f"Generated {len(runs)} runs", Fore.GREEN)
 
     runs, ignore = filter_runs(runs)
-    runs_test, _ = filter_runs(runs_test)
     print_log(f"Ignored {ignore} runs", Fore.MAGENTA)
 
     metar_data = load_metar(METAR_FILE)
     print_log(f"Loaded {len(metar_data)} METAR records\n", Fore.GREEN)
 
     runs_data = process_runs(runs, metar_data)
-    runs_data_test = process_runs(runs_test, metar_data)
+    transformed_data = transform(runs_data)
 
-    training_data = transform(runs_data)
-    testing_data = transform(runs_data_test)
-    train_transformer(training_data, testing_data)
-    test_transformer(testing_data)
+    return transformed_data
+
+
+def main():
+    if len(sys.argv) != 2:
+        print_log(f"Usage: python {sys.argv[0]} [train|test]", Fore.RED)
+        sys.exit(1)
+
+    input = sys.argv[1]
+
+    if input not in ["train", "test"]:
+        print_log(f"Usage: python {sys.argv[0]} [train|test]", Fore.RED)
+        sys.exit(1)
+
+    print_log("Starting METAR data processing\n", Fore.GREEN)
+
+    if input == "train":
+        runs = generate_runs()
+        train_transformer(prepare_data(runs))
+    elif input == "test":
+        runs_test = generate_test()
+        test_transformer(prepare_data(runs_test))
 
 
 if __name__ == "__main__":
