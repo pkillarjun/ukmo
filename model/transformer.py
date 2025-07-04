@@ -40,6 +40,7 @@ class WeatherEncoder(nn.Module):
 
 
 # https://docs.pytorch.org/docs/stable/generated/torch.nn.TransformerDecoderLayer.html
+# Implements smooth rounding from https://arxiv.org/abs/2504.19026
 class TemperatureDecoder(nn.Module):
 
     def __init__(self, run_enc_size, fcst_enc_size, fcst_steps, d_model, nhead, num_layers, dim_feedforward, dropout):
@@ -59,7 +60,28 @@ class TemperatureDecoder(nn.Module):
         self.transformer = nn.TransformerDecoder(decoder_layer, num_layers)
         self.output_proj = nn.Linear(d_model, 1)
 
-    def forward(self, enc_output, t_run_hour, t_time):
+    def sigmoid(self, z):
+        return 1 / (1 + torch.exp(-z))
+
+    def smooth_round_sigma(self, x, k):
+        result = torch.zeros_like(x)
+
+        # Get range of integers to consider (5 neighbors for efficiency)
+        x_floor = torch.floor(x)
+
+        for offset in range(-2, 3):  # n in [floor(x)-2, floor(x)+2]
+            n = x_floor + offset
+
+            # Sigmoid window: σ(k(x-(n-0.5))) - σ(k(x-(n+0.5)))
+            sig_left = self.sigmoid(k * (x - (n - 0.5)))
+            sig_right = self.sigmoid(k * (x - (n + 0.5)))
+            window = sig_left - sig_right
+
+            result += n * window
+
+        return result
+
+    def forward(self, enc_output, t_run_hour, t_time, epoch=None, max_epochs=None):
         # Broadcast model run encoding to all fcst timesteps
         run_enc_expand = t_run_hour.unsqueeze(1).repeat(1, self.fcst_steps, 1)
 
@@ -76,7 +98,18 @@ class TemperatureDecoder(nn.Module):
         output = self.transformer(decoder_input, enc_output, tgt_mask=tgt_mask)
 
         # Project to temperature values and remove singleton dimension
-        return self.output_proj(output).squeeze(-1)
+        temps = self.output_proj(output).squeeze(-1)
+
+        if self.training:
+            # Reach k=20 by 1/2 of training (before typical early stopping)
+            target_epoch = max_epochs // 2
+            progress = min(epoch / target_epoch, 1.0)
+            k = 5 + progress * 15  # k: 5→20
+        else:
+            # Fixed k=15 for validation/testing (middle ground sharpness)
+            k = 15
+
+        return self.smooth_round_sigma(temps, k)
 
 
 class WeatherModel(nn.Module):
@@ -88,9 +121,9 @@ class WeatherModel(nn.Module):
         self.decoder = TemperatureDecoder(run_enc_size, fcst_enc_size, fcst_steps, d_model, nhead, dec_layers, dim_feedforward,
                                           dropout)
 
-    def forward(self, t_run_hour, t_input, t_time):
+    def forward(self, t_run_hour, t_input, t_time, epoch=None, max_epochs=None):
         enc_output = self.encoder(t_input)
-        return self.decoder(enc_output, t_run_hour, t_time)
+        return self.decoder(enc_output, t_run_hour, t_time, epoch, max_epochs)
 
 
 def train_model(model, train_dataset, validation_dataset, params):
@@ -122,7 +155,7 @@ def train_model(model, train_dataset, validation_dataset, params):
 
             # Mixed precision forward pass and loss calculation
             with torch.amp.autocast('cuda'):
-                preds = model(t_run_hour, t_input, t_time)
+                preds = model(t_run_hour, t_input, t_time, epoch=epoch, max_epochs=epochs)
                 loss = criterion(preds, t_temp)
 
             # Backward pass: scale loss → compute gradients → unscale for clipping
