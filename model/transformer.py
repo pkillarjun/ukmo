@@ -191,12 +191,12 @@ def train_transformer(training_data):
                          run_enc_size=run_enc_size,
                          fcst_enc_size=fcst_enc_size,
                          fcst_steps=fcst_steps,
-                         d_model=(ukmo_var_size * 4),
-                         nhead=4,
-                         enc_layers=4,
-                         dec_layers=2,
-                         dim_feedforward=512,
-                         dropout=0.2)
+                         d_model=256,
+                         nhead=8,
+                         enc_layers=6,
+                         dec_layers=4,
+                         dim_feedforward=1024,
+                         dropout=0.1)
 
     params = {'learning_rate': 0.0001, 'epochs': 500, 'l2_reg_weight': 0.001}
 
@@ -218,12 +218,12 @@ def test_transformer(testing_data):
                          run_enc_size=run_enc_size,
                          fcst_enc_size=fcst_enc_size,
                          fcst_steps=fcst_steps,
-                         d_model=(ukmo_var_size * 4),
-                         nhead=4,
-                         enc_layers=4,
-                         dec_layers=2,
-                         dim_feedforward=512,
-                         dropout=0.2)
+                         d_model=256,
+                         nhead=8,
+                         enc_layers=6,
+                         dec_layers=4,
+                         dim_feedforward=1024,
+                         dropout=0.1)
 
     model.load_state_dict(torch.load(MODEL_FILE))
     model.to(DEVICE)

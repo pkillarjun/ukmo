@@ -147,10 +147,6 @@ def transform_run(run):
         for field in COLUMN_TRANSFORM:
             c_row.append(t_row[field])
 
-            # Add rounded number also for temp;
-            if field in ['temp', 'temp_min', 'temp_max', 'temp_dew', 'temp_surf']:
-                c_row.append(round(t_row[field]))
-
         input.append(c_row)
 
     output = []
