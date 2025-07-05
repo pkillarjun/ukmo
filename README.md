@@ -1,33 +1,49 @@
-# UKMO
+# UKMO Weather Data Analysis
 
 Daily temperature forecasting using UK Met Office 2km model.
 
-## Download Training Data
+## Quick Start
 
-First, setup the date and time in `common/config.py`, then run:
-
-```sh
-make metoffice
+```bash
+wget https://github.com/pkillarjun/ukmo/commit/2f4827d28852b5f8b43189cf4dcfba41fece0b95.patch
+git apply -r 2f4827d28852b5f8b43189cf4dcfba41fece0b95.patch
 ```
 
-**Note:** The `data/ukmo-csv-23_06-25_06.zip` file contains forecasts from `2023-06-01` to `2025-06-30`.
+## Setup
 
-## Download EGLC Data
+### Prerequisites
 
-```sh
-make eglc
-```
+- Configure date and time range in `common/config.py`
+- Ensure sufficient disk space for forecast data
 
-## Remove Bad Data
+### Data Pipeline
 
-To clean up bad data entries:
+1. **Download UKMO Forecasts**
+   ```sh
+   make metoffice
+   ```
+   Contains forecasts from 2023-06-01 to 2025-06-30 in `data/ukmo-csv-23_06-25_06.zip`
 
-```sh
-make ignore
-```
+2. **Download Station Data**
+   ```sh
+   make eglc
+   ```
 
-## Model Training
+3. **Clean Dataset**
+   ```sh
+   make ignore
+   ```
+   Removes bad data entries and sensor artifacts
 
-```sh
-make train
-```
+4. **Train Model**
+   ```sh
+   make train
+   ```
+
+## Documentation
+
+- [Database Compilation Guide](data/README.md) - Detailed instructions for building training datasets
+
+## Known Issues
+
+EGLC station model training is limited due to sensor rounding artifacts. The inherent quantization combined with weather's chaotic nature significantly impacts prediction accuracy.
