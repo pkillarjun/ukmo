@@ -16,11 +16,8 @@ def check_value(file_path):
     df = pd.read_csv(file_path)
 
     for col in df.columns:
-        for idx, value in df[col].items():
+        for _, value in df[col].items():
             if value == DEFAULT_VALUE:
-                if idx == 0 and col in ['temp_min', 'temp_max', 'precip_accum']:
-                    continue
-
                 found_issues = True
                 break
         if found_issues:

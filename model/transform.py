@@ -12,6 +12,7 @@ from common.config import *
 from common.utility import *
 
 FORECAST_PADDING = 1
+FORECAST_FRAME = 15
 
 
 def is_invalid(value):
@@ -138,12 +139,6 @@ def transform_run(run):
         c_row = []
         t_row = transform_row(row)
 
-        # Fix missing data
-        if t_row['temp_min'] == DEFAULT_VALUE:
-            t_row['temp_min'] = t_row['temp']
-        if t_row['temp_max'] == DEFAULT_VALUE:
-            t_row['temp_max'] = t_row['temp']
-
         for field in COLUMN_TRANSFORM:
             c_row.append(t_row[field])
 
@@ -158,7 +153,7 @@ def transform_run(run):
 
         output.append({'time': metar_hour, 'temp': metar['temp']})
 
-    if len(output) != ((FORECAST_HOURS - 2) * 2):
+    if len(output) != (FORECAST_FRAME - FORECAST_PADDING):
         return {}
 
     transformed_data = {'run_hour': run_hour, 'input': input, 'output': output}

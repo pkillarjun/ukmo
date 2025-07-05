@@ -137,7 +137,7 @@ def train_model(model, train_dataset, validation_dataset, params):
 
     es_loss = float('inf')
     es_counter = 0
-    es_patience = 30
+    es_patience = 50
     es_model_state = None
 
     for epoch in range(epochs):

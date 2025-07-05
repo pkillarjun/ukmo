@@ -16,8 +16,8 @@ from model.transformer import *
 
 
 def generate_test():
-    _START_DATE = datetime(2025, 6, 1)
-    _END_DATE = datetime(2025, 6, 30)
+    _START_DATE = datetime(2023, 7, 1)
+    _END_DATE = datetime(2023, 7, 1)
 
     runs = []
     current_date = _START_DATE
@@ -104,7 +104,7 @@ def filter_metar(run, run_metar_data):
 
     run_dt = parse_run_time(run)
     init_time = run_dt + timedelta(hours=FORECAST_PADDING)
-    cutoff_time = run_dt + timedelta(hours=FORECAST_HOURS - FORECAST_PADDING)
+    cutoff_time = run_dt + timedelta(hours=FORECAST_FRAME)
 
     # Remove first and last hour from METAR reports
     # Filter out reports if they are not from xx:20 or xx:50
