@@ -36,11 +36,15 @@ REQUIRED_VARIABLES = [
     "cloud_amount_of_low_cloud",
     "cloud_amount_of_medium_cloud",
 
+    # Precipitation
+    "precipitation_accumulation",
+
     # Pressure
     "pressure_at_mean_sea_level",
 
     # Flux
     "radiation_flux_in_shortwave_direct_downward_at_surface",
+    "radiation_flux_in_shortwave_total_downward_at_surface",
     "radiation_flux_in_longwave_downward_at_surface",
     "sensible_heat_flux_at_surface",
 ]
@@ -69,11 +73,15 @@ COLUMN_PROCESS = [
     'cloud_low',
     'cloud_medium',
 
+    # Rainfall accumulation (mm)
+    'precip_accum',
+
     # Pa
     'sea_press',
 
     # Watt per square metre
     'rad_sw_dir_down',
+    'rad_sw_total_down',
     'rad_lw_down',
     'heat_flux',
 ]
@@ -94,11 +102,15 @@ FILE_CSV_MAPPING = {
     'cloud_amount_of_low_cloud.nc': 'cloud_low',
     'cloud_amount_of_medium_cloud.nc': 'cloud_medium',
 
+    # Precipitation
+    'precipitation_accumulation.nc': 'precip_accum',
+
     # Pressure
     'pressure_at_mean_sea_level.nc': 'sea_press',
 
     # Flux
     'radiation_flux_in_shortwave_direct_downward_at_surface.nc': 'rad_sw_dir_down',
+    'radiation_flux_in_shortwave_total_downward_at_surface.nc': 'rad_sw_total_down',
     'radiation_flux_in_longwave_downward_at_surface.nc': 'rad_lw_down',
     'sensible_heat_flux_at_surface.nc': 'heat_flux',
 }
@@ -133,11 +145,15 @@ COLUMN_TRANSFORM = [
     'cloud_low',
     'cloud_medium',
 
+    # Precipitation (mm)
+    'precip_accum',
+
     # Sea pressure (hPa) - Convert from Pa: ÷ 100
     'sea_press',
 
     # Flux (W/m²)
     'rad_sw_dir_down',
+    'rad_sw_total_down',
     'rad_lw_down',
     'heat_flux',
 ]

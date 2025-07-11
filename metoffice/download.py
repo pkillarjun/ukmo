@@ -11,7 +11,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from common.config import *
 from common.utility import *
 
-DOWNLOAD_THREADS = 4
+DOWNLOAD_THREADS = 12
 
 BUCKET_NAME = "met-office-atmospheric-model-data"
 BUCKET_PREFIX = "uk-deterministic-2km"

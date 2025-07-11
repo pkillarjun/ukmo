@@ -12,7 +12,7 @@ from common.utility import *
 from download import download_run_data
 from extract import extract_run_data
 
-CONCURRENT_RUNS = 4
+CONCURRENT_RUNS = 6
 
 
 def cleanup_run_files(run_id):
